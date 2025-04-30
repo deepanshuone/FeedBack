@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -11,30 +10,27 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB Connection (MongoDB Atlas)
-const mongoURI = 'mongodb+srv://devloper:Dishu@2002@FB.mongodb.net/feedbackDB?retryWrites=true&w=majority';
+const mongoURI = 'mongodb+srv://developer:Dishu2002@fb.y1b6wnr.mongodb.net/?retryWrites=true&w=majority&appName=FB';
 
-mongoose.connect(mongoURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose.connect(mongoURI)
   .then(() => console.log('MongoDB Connected'))
   .catch((err) => console.error('MongoDB Connection Error:', err));
 
 // Schema and Model
 const FeedbackSchema = new mongoose.Schema({
-  phone: {
-    type: String,
-    required: true,
-  },
-  message: {
-    type: String,
-    required: true,
-  },
+  phone: { type: String, required: true },
+  message: { type: String, required: true },
 }, { timestamps: true });
 
 const Feedback = mongoose.model('Feedback', FeedbackSchema);
 
 // Routes
+// Root route (GET /)
+app.get('/', (req, res) => {
+  res.send('Welcome to the Feedback API!');
+});
+
+// POST route for feedback submission
 app.post('/submit', async (req, res) => {
   const { phone, message } = req.body;
 
