@@ -15,7 +15,7 @@ function App() {
     }
 
     try {
-      await axios.post('http://localhost:5000/submit', { phone, message }); // Updated to port 5000
+      await axios.post('https://feedback-r10l.onrender.com/submit', { phone, message });
       setStatus('Feedback submitted successfully!');
       setPhone('');
       setMessage('');
