@@ -10,11 +10,14 @@ const PORT = 5000;
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection
-mongoose.connect('mongodb://127.0.0.1:27017/feedbackDB', {
+// MongoDB Connection (MongoDB Atlas)
+const mongoURI = 'mongodb+srv://devloper:Dishu@2002@FB.mongodb.net/feedbackDB?retryWrites=true&w=majority';
+
+mongoose.connect(mongoURI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => console.log('MongoDB Connected'))
+  useUnifiedTopology: true,
+})
+  .then(() => console.log('MongoDB Connected'))
   .catch((err) => console.error('MongoDB Connection Error:', err));
 
 // Schema and Model
