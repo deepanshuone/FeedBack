@@ -105,6 +105,20 @@ function App() {
         Download Feedback (Excel)
       </button>
 
+      {/* Print preview button always visible */}
+      <div ref={printRef} style={{ border: '1px solid #ccc', padding: '10px', marginTop: '20px' }}>
+        <h3>Preview Feedback (Before Submit)</h3>
+        <p><strong>Phone:</strong> {phone}</p>
+        <p><strong>Feedback:</strong> {message}</p>
+      </div>
+      
+      <button
+        onClick={handlePrint}
+        style={{ padding: '10px 20px', marginTop: '10px' }}
+      >
+        Print Preview of Feedback
+      </button>
+
       {lastFeedback && (
         <>
           <div ref={printRef} style={{ border: '1px solid #ccc', padding: '10px', marginTop: '20px' }}>
@@ -113,7 +127,11 @@ function App() {
             <p><strong>Feedback:</strong> {lastFeedback.message}</p>
             <p><strong>Date:</strong> {lastFeedback.date}</p>
           </div>
-          <button onClick={handlePrint} style={{ padding: '10px 20px', marginTop: '10px' }}>
+          <button
+            onClick={handlePrint}
+            disabled={!lastFeedback}
+            style={{ padding: '10px 20px', marginTop: '10px' }}
+          >
             Print Last Feedback
           </button>
         </>
