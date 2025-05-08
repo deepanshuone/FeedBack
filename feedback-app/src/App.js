@@ -1,6 +1,8 @@
 // src/App.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 function App() {
   const [phone, setPhone] = useState('');
@@ -24,6 +26,44 @@ function App() {
       setStatus('Submission failed. Try again later.');
     }
   };
+
+  const handleDownload = async () => {
+    try {
+      const response = await axios.get('https://feedback-r10l.onrender.com/feedback', {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+  
+      const data = response.data;
+  
+      if (!Array.isArray(data) || data.length === 0) {
+        setStatus('No feedback data found.');
+        return;
+      }
+  
+      // Only keep phone and message fields for Excel
+      const cleanedData = data.map(({ phone, message, createdAt }) => ({
+        Phone: phone,
+        Feedback: message,
+        Date: new Date(createdAt).toLocaleString(),
+      }));
+  
+      const worksheet = XLSX.utils.json_to_sheet(cleanedData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Feedback');
+  
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const file = new Blob([excelBuffer], { type: 'application/octet-stream' });
+      saveAs(file, 'feedback.xlsx');
+  
+      setStatus('Download successful.');
+    } catch (error) {
+      console.error('Download Error:', error.response?.data || error.message);
+      setStatus('Download failed. Please try again later.');
+    }
+  };
+  
 
   return (
     <div style={{ maxWidth: '400px', margin: '40px auto', fontFamily: 'sans-serif' }}>
@@ -50,6 +90,11 @@ function App() {
 
         <button type="submit" style={{ padding: '10px 20px' }}>Submit</button>
       </form>
+
+      <button onClick={handleDownload} style={{ padding: '10px 20px', marginTop: '10px' }}>
+        Download Feedback (Excel)
+      </button>
+
       {status && <p style={{ marginTop: '15px' }}>{status}</p>}
     </div>
   );

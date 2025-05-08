@@ -9,7 +9,7 @@ const PORT = 5000;
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection (MongoDB Atlas)
+// MongoDB Connection
 const mongoURI = 'mongodb+srv://developer:Dishu2002@fb.y1b6wnr.mongodb.net/?retryWrites=true&w=majority&appName=FB';
 
 mongoose.connect(mongoURI)
@@ -25,12 +25,11 @@ const FeedbackSchema = new mongoose.Schema({
 const Feedback = mongoose.model('Feedback', FeedbackSchema);
 
 // Routes
-// Root route (GET /)
 app.get('/', (req, res) => {
   res.send('Welcome to the Feedback API!');
 });
 
-// POST route for feedback submission
+// Submit feedback
 app.post('/submit', async (req, res) => {
   const { phone, message } = req.body;
 
@@ -43,6 +42,18 @@ app.post('/submit', async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
+
+// ✅ Get all feedback (used for Excel download)
+app.get('/feedback', async (req, res) => {
+  try {
+    const feedbacks = await Feedback.find().sort({ createdAt: -1 }); // adjust as per your schema
+    res.json(feedbacks);
+  } catch (err) {
+    console.error('Error fetching feedback:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 
 // Start Server
 app.listen(PORT, () => {
